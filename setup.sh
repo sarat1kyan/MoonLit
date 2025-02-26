@@ -198,6 +198,7 @@ cat > config.json <<EOL
         "disk",
         "memory",
         "network",
+        "diagnostics",
         "exec"
     ],
     "system_settings": {
@@ -216,42 +217,14 @@ cat > config.json <<EOL
         "restricted_exec_commands": [
             "rm -rf /",
             "shutdown -h now",
+            "rm -rf/",
             "reboot",
             "dd if=/dev/zero of=/dev/sda",
             "mkfs.ext4"
         ],
         "log_executed_commands": true
     },
-    "log_files": [
-        "/var/log/syslog",
-        "/var/log/auth.log",
-        "/var/log/kern.log",
-        "/var/log/faillog",
-        "/var/log/cron.log",
-        "/var/log/mail.log",
-        "/var/log/mysqld.log",
-        "/var/log/mariadb/mariadb.log",
-        "/var/log/httpd/error_log",
-        "/var/log/apache2/error.log",
-        "/var/log/nginx/error.log",
-        "/var/log/Xorg.0.log",
-        "/var/log/messages",
-        "/var/log/boot.log",
-        "/var/log/yum.log",
-        "/var/log/secure",
-        "/var/log/journal",
-        "/var/log/maillog",
-        "/var/log/alternatives.log",
-        "/var/log/btmp",
-        "/var/log/wtmp",
-        "/var/log/lastlog",
-        "/var/log/sudo.log",
-        "/var/log/apt/history.log",
-        "/var/log/apt/term.log",
-        "/var/log/audit/audit.log",
-        "/var/log/lightdm/lightdm.log",
-        "/var/log/Xorg.1.log",
-        "/var/log/user.log"
+
     ],
     "email_settings": {
         "from_email": "$admin_email",
@@ -276,20 +249,7 @@ echo -e "${GREEN}[SUCCESS] Setup completed successfully.${RESET}"
 divider
 sleep 2
 
-read -p $' \e[36mDo you want to start the alerting system? (yes/no): \e[0m' user_agree
-if [[ "$user_agree" != "yes" ]]; then
-    echo -e "${RED}[ABORTED] You will not receive ALERTS about new logs and events.${RESET}"
-fi
-
-nohup python3 moonlit-log-watcher.py &
-
-divider
-
-echo -e "${GREEN}[SUCCESS] The ALERTING system has been launched.${RESET}"
-
-divider
-
-echo -e "${CYAN}[INFO] Launching moonlit.py in 3 seconds...${RESET}"
+echo -e "${CYAN}[INFO] Launching MoonLit AI Assistant in 3 seconds...${RESET}"
 sleep 3
 
 python3 moonlit.py
