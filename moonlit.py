@@ -47,7 +47,39 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
+recent_alerts = {}
 
+def send_unique_alert(message):
+    global recent_alerts
+    if message in recent_alerts:
+        return 
+    send_alert(f"🚨 {message}") 
+    recent_alerts[message] = time.time()
+
+    for key in list(recent_alerts.keys()):
+        if time.time() - recent_alerts[key] > 300:
+            del recent_alerts[key]
+
+def monitor_logs():
+    for log_file in LOG_FILES:
+        if os.path.exists(log_file):
+            try:
+                with open(log_file, "r") as file:
+                    file.seek(0, os.SEEK_END)  # Move to end of file
+                    while True:
+                        line = file.readline()
+                        if not line:
+                            time.sleep(1)
+                            continue
+
+                        for keyword in alert_keywords:
+                            if re.search(rf"\b{keyword}\b", line, re.IGNORECASE):
+                                send_unique_alert(line.strip())
+                                break
+            except Exception as e:
+                logging.error(f"Failed to monitor {log_file}: {e}")
+        else:
+            logging.warning(f"⚠️ Log file not found: {log_file}")
 '''
 def send_alert(message):
     try:
@@ -59,8 +91,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 with open('config.json') as f:
     config = json.load(f)
 '''
-
-import requests
 
 def send_alert(message):
     
@@ -142,7 +172,7 @@ def send_welcome(message):
     )
     keyboard.add(
         KeyboardButton("⚠️ Restart"),
-        KeyboardButton("🔴 Shutdown")
+        KeyboardButton(""📊 System Diagnostics"")
     )
     keyboard.add(KeyboardButton("ℹ️ Help"), KeyboardButton("❓ About")) 
 
@@ -206,6 +236,19 @@ def send_help(message):
 
     bot.send_message(message.chat.id, help_text, parse_mode="MarkdownV2")
 
+@bot.message_handler(commands=['diagnostics'])
+def send_diagnostics_button(message):
+    """Send a button to trigger system diagnostics."""
+    markup = types.InlineKeyboardMarkup()
+    btn = types.InlineKeyboardButton("Run Diagnostics 📊", callback_data="run_diagnostics")
+    markup.add(btn)
+    bot.send_message(message.chat.id, "Click below to run system diagnostics:", reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: call.data == "run_diagnostics")
+def handle_diagnostics_callback(call):
+    """Run diagnostics and send the report when button is clicked."""
+    bot.answer_callback_query(call.id, "Running system diagnostics... 📊")
+    gather_diagnostics()
 
 @bot.message_handler(func=lambda message: True)
 def handle_keyboard_buttons(message):
@@ -219,6 +262,10 @@ def handle_keyboard_buttons(message):
         execute_custom_command(message) 
         return
 
+    if message.text == "📊 System Diagnostics":
+        send_diagnostics(message)
+        return
+
     command_map = {
         "📊 Check Status": "status",
         "📜 List Services": "services",
@@ -227,7 +274,7 @@ def handle_keyboard_buttons(message):
         "🌐 Network Info": "network",
         "🔄 Update System": "update",
         "⚠️ Restart": "restart",
-        "🔴 Shutdown": "shutdown",
+        "📊 Check Status": "status",
         "ℹ️ Help": "help",
         "❓ About": "about"
     }
@@ -278,6 +325,7 @@ if not openai.api_key:
     exit(1)
 
 log_files = config['log_files']
+alert_keywords = config['alert_keywords']
 email_settings = config['email_settings']
 
 if not openai.api_key:
@@ -288,6 +336,17 @@ def escape_markdown_v2(text):
     """Escapes Telegram MarkdownV2 special characters."""
     escape_chars = r"_*[]()~`>#+-=|{}.!"
     return "".join(f"\\{char}" if char in escape_chars else char for char in text)
+
+@bot.message_handler(commands=['diagnostics'])
+def send_diagnostics(message):
+    if str(message.chat.id) != TELEGRAM_ADMIN_ID:
+        bot.reply_to(message, "🚫 *You are not authorized to use this bot.*", parse_mode="MarkdownV2")
+        return
+
+    bot.reply_to(message, "🛠️ Running system diagnostics... Please wait.")
+
+    report = gather_diagnostics()
+    bot.send_message(message.chat.id, f"📊 *System Diagnostics Report:*\n\n{report}", parse_mode="MarkdownV2")
 
 @bot.message_handler(commands=['exec'])
 def execute_custom_command(message):
@@ -303,7 +362,6 @@ def execute_custom_command(message):
         bot.reply_to(message, "❌ *Please provide a command to execute.*\nExample:\n`/exec ls -lah`", parse_mode="MarkdownV2")
         return
 
-    # Prevent execution of restricted commands
     for restricted in RESTRICTED_COMMANDS:
         if restricted in command:
             bot.reply_to(message, f"⚠️ *Command is blocked for security reasons:* `{restricted}`", parse_mode="MarkdownV2")
@@ -393,7 +451,7 @@ def handle_command(message):
         bot.reply_to(message, "🚫 *You are not authorized to run this command.*", parse_mode="MarkdownV2")
         return
 
-    command = message.text.lstrip("/").split()[0]  # Extract only the first part of the command
+    command = message.text.lstrip("/").split()[0] 
 
     if command == "exec":
         return  
@@ -508,7 +566,7 @@ def send_desktop_notification(severity, message):
 def get_journalctl_logs():
     try:
         result = subprocess.run(
-            ["journalctl", "-n", "100", "--no-pager"],  # Get last 100 lines
+            ["journalctl", "-n", "100", "--no-pager"],
             text=True,
             capture_output=True
         )
@@ -592,7 +650,6 @@ def explain_and_suggest_fix(error_message, severity):
     max_retries = 5  
     for attempt in range(max_retries):
         try:
-            # First, try GPT-4
             try:
                 response = client.chat.completions.create(
                     model="gpt-4o-2024-08-06",
@@ -790,9 +847,10 @@ def gather_diagnostics():
 
     console.print(summary)
 
-    # **Send diagnostics to Discord**
     full_report = f"{system_info}\n{cpu_info}\n{memory_info}\n{disk_info}\n{network_info}\n{services_info}\n{logs_info}\n{summary}"
     send_discord_notification("📊 System Diagnostics Report", full_report)
+    return full_report
+
 def check_for_updates():
     console.print("[yellow][INFO] Checking for updates...[/yellow]")
 
@@ -857,3 +915,6 @@ if __name__ == "__main__":
         elif choice == "7":
             console.print("[green]Exiting AI Assistant.[/green]")
             break
+    logging.info("🚀 Moonlit Log Watcher Started...")
+    monitor_logs() 
+    monitor_journal() 
