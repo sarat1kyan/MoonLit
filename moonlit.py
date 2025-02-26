@@ -28,8 +28,13 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 console = Console()
 RESTRICTED_COMMANDS = ["rm -rf /", "shutdown -h now", "passwd", "dd if=/dev/zero of=/dev/sda", "mkfs.ext4", "chmod 777"]
-# logging.basicConfig(filename='assistant.log', level=logging.INFO)
-# logging.basicConfig(filename='error_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='assistant.log', level=logging.INFO)
+logging.basicConfig(filename='error_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+client = openai.OpenAI() 
+openai.api_key = os.getenv("OPENAI_API_KEY")
+with open('config.json') as f:
+    config = json.load(f)
+
 TELEGRAM_BOT_TOKEN = config["telegram_bot_token"]
 TELEGRAM_ADMIN_ID = str(config["telegram_admin_id"])
 LOG_FILE = "/var/log/MoonLit_commands.log"
