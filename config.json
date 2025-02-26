@@ -1,4 +1,6 @@
 {
+    "telegram_bot_token": "$telegram_bot_token",
+    "telegram_admin_id": "$telegram_admin_id",
     "log_files": [
         "/var/log/syslog",
         "/var/log/messages",
@@ -15,8 +17,8 @@
         "/var/log/lastlog",
         "/var/log/audit/audit.log",
         "/var/log/fail2ban.log",
-        "/var/log/dpkg.log",         
-        "/var/log/yum.log",          
+        "/var/log/dpkg.log",
+        "/var/log/yum.log",
         "/var/log/apt/history.log",
         "/var/log/apt/term.log",
         "/var/log/nginx/access.log",
@@ -33,7 +35,7 @@
         "/var/log/maillog",
         "/var/log/cron.log",
         "/var/log/cron",
-        "/var/log/ufw.log",       
+        "/var/log/ufw.log",
         "/var/log/nftables.log",
         "/var/log/ipfirewall.log",
         "/var/log/docker.log",
@@ -41,11 +43,11 @@
         "/var/log/Xorg.0.log",
         "/var/log/Xorg.1.log",
         "/var/log/lightdm/lightdm.log",
-        "/var/log/journal",   
+        "/var/log/journal",
         "/var/log/user.log",
-        "/var/log/samba/log.smbd",   
-        "/var/log/proftpd/proftpd.log", 
-        "/var/log/clamav/clamav.log" 
+        "/var/log/samba/log.smbd",
+        "/var/log/proftpd/proftpd.log",
+        "/var/log/clamav/clamav.log"
     ],
     "email_settings": {
         "smtp_server": "smtp.your-email.com",
