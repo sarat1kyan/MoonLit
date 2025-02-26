@@ -172,7 +172,7 @@ def send_welcome(message):
     )
     keyboard.add(
         KeyboardButton("⚠️ Restart"),
-        KeyboardButton(""📊 System Diagnostics"")
+        KeyboardButton("📊 System Diagnostics")
     )
     keyboard.add(KeyboardButton("ℹ️ Help"), KeyboardButton("❓ About")) 
 
