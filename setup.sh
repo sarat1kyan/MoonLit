@@ -58,6 +58,12 @@ if [[ "$user_agree" != "yes" ]]; then
     exit 1
 fi
 
+read -p $' \e[36mYou sure that you read the Warning message? (yes/no): \e[0m' user_agree
+if [[ "$user_agree" != "yes" ]]; then
+    echo -e "${RED}[ABORTED] Setup canceled.${RESET}"
+    exit 1
+fi
+
 divider
 echo -e "${CYAN}${BOLD}Proceeding with setup...${RESET}"
 divider
@@ -224,6 +230,62 @@ cat > config.json <<EOL
         ],
         "log_executed_commands": true
     },
+    "log_files": [
+        "/var/log/syslog",
+        "/var/log/messages",
+        "/var/log/dmesg",
+        "/var/log/kern.log",
+        "/var/log/boot.log",
+        "/var/log/alternatives.log",
+        "/var/log/auth.log",
+        "/var/log/secure",
+        "/var/log/faillog",
+        "/var/log/sudo.log",
+        "/var/log/btmp",
+        "/var/log/wtmp",
+        "/var/log/lastlog",
+        "/var/log/audit/audit.log",
+        "/var/log/fail2ban.log",
+        "/var/log/dpkg.log",         
+        "/var/log/yum.log",          
+        "/var/log/apt/history.log",
+        "/var/log/apt/term.log",
+        "/var/log/nginx/access.log",
+        "/var/log/nginx/error.log",
+        "/var/log/httpd/access_log",
+        "/var/log/httpd/error_log",
+        "/var/log/apache2/access.log",
+        "/var/log/apache2/error.log",
+        "/var/log/mysqld.log",
+        "/var/log/mariadb/mariadb.log",
+        "/var/log/postgresql/postgresql.log",
+        "/var/log/mongodb/mongod.log",
+        "/var/log/mail.log",
+        "/var/log/maillog",
+        "/var/log/cron.log",
+        "/var/log/cron",
+        "/var/log/ufw.log",       
+        "/var/log/nftables.log",
+        "/var/log/ipfirewall.log",
+        "/var/log/docker.log",
+        "/var/log/kubelet.log",
+        "/var/log/Xorg.0.log",
+        "/var/log/Xorg.1.log",
+        "/var/log/lightdm/lightdm.log",
+        "/var/log/journal",   
+        "/var/log/user.log",
+        "/var/log/samba/log.smbd",   
+        "/var/log/proftpd/proftpd.log", 
+        "/var/log/clamav/clamav.log" 
+    ],
+
+    ALERT_KEYWORDS = [
+        "FAILED", "error", "segfault", "panic", "unauthorized", "denied",
+        "disk full", "critical", "fatal", "attack", "malware", "rootkit",
+        "intrusion", "brute force", "sql injection", "dos", "overload",
+        "banned", "blocked", "timeout", "corrupt", "compromised", "root access",
+        "firewall breach", "unusual login", "suspicious", "DDoS"
+]
 
     ],
     "email_settings": {
