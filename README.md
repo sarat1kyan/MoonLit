@@ -22,14 +22,14 @@ It allows system administrators to remotely control their servers via a Telegram
 
 ## 📌 **Features**
 
-	✅ System Monitoring: Get real-time system performance, memory, disk, and network usage.
-	✅ Log Analysis: Monitors system logs for errors and suggests fixes using AI (Stable release coming soon).
-	✅ Automated Diagnostics: Provides detailed system health reports.
-	✅ Remote Control via Telegram: Execute commands directly from Telegram.
-	✅ Error Handling & Notifications: Sends alerts via email, Telegram, and desktop notifications.
-	✅ Secure Execution: Allows admins to run system commands while ensuring security.
-	✅ Automated System Updates: Fetch and install the latest updates for your server.
-	✅ Discord Webhook Notifications: Send important logs and alerts to Discord.
+	[ + ]System Monitoring: Get real-time system performance, memory, disk, and network usage.
+	[ + ]Log Analysis: Monitors system logs for errors and suggests fixes using AI (Stable release coming soon).
+	[ + ]Automated Diagnostics: Provides detailed system health reports.
+	[ + ]Remote Control via Telegram: Execute commands directly from Telegram.
+	[ + ]Error Handling & Notifications: Sends alerts via email, Telegram, and desktop notifications.
+	[ + ]Secure Execution: Allows admins to run system commands while ensuring security.
+	[ + ]Automated System Updates: Fetch and install the latest updates for your server.
+	[ + ]Discord Webhook Notifications: Send important logs and alerts to Discord.
 
 ## 🛠️ **Installation**
 
@@ -60,13 +60,13 @@ Run the setup script to automatically install dependencies:
 
 ## ⚙️ **Manual Configuration**
 
-All MoonLit configurations are save in 
+All MoonLit configurations are saved in 
 
 	config.json
 
 After installation, you can manually configure MoonLit by editing the config.json file if needed
 
-💡 Ensure correct values before running the program!
+💡 Ensure to check and correct values before running the program!
 
 ## 🚀 **Running MoonLit**
 
@@ -116,11 +116,11 @@ The bot provides an interactive keyboard for quick command access.
 
 MoonLit can automatically diagnose your system and report:
 
-	✅ CPU Usage
-	✅ Memory Usage
-	✅ Disk Space
-	✅ Running Services
-	✅ Recent System Errors
+	[ + ]CPU Usage
+	[ + ]Memory Usage
+	[ + ]Disk Space
+	[ + ]Running Services
+	[ + ]Recent System Errors
 
 To run diagnostics manually:
 
